@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteca</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Biblioteca</h1>
+
+        <div id="livro">
+            Carregando...
+        </div>
+
+    </div>
+
+   <script>
+    function carregarLivro() {
+    fetch('/livro')
+        .then(response => response.json())
+        .then(livro => {
+            document.getElementById('livro').innerHTML = `
+                <h2>${livro.titulo}</h2>
+                <p>Autor: ${livro.autor}</p>
+                <p>Disponível: ${livro.disponivel ? 'Sim' : 'Não'}</p>
+
+                ${
+                    livro.disponivel
+                    ? '<button class="disponivel" onclick="emprestarLivro()">Emprestar</button>'
+                    : '<button class="indisponivel" onclick="devolverLivro()">Devolver</button>'
+                }
+            `;
+        });
+    }
+
+    function emprestarLivro() {
+        fetch('/livro/emprestar')
+            .then(() => carregarLivro());
+    }
+
+    function devolverLivro() {
+        fetch('/livro/devolver')
+            .then(() => carregarLivro());
+    }
+
+    carregarLivro();
+</script>
+
+</body>
+</html>
