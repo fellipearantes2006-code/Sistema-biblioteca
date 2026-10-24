@@ -2,8 +2,8 @@
 package br.com.biblioteca.sistema_biblioteca;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+//import org.springframework.ui.Model;
+//import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -17,11 +17,6 @@ public class BibliotecaController {
         this.bibliotecaService = bibliotecaService;
     }
 
-    @GetMapping("/")
-    public String inicio(Model model) {
-        model.addAttribute("livros", bibliotecaService.listarLivros());
-        return "index";
-    }
 
     @PostMapping("/livros")
     public String cadastrarLivro(
@@ -81,4 +76,8 @@ public class BibliotecaController {
 
         return "redirect:/";
     }
+    
+    
+
+
 }

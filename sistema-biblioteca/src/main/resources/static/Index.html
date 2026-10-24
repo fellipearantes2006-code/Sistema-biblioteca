@@ -2,53 +2,67 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-
     <div class="container">
-
         <h1>Biblioteca</h1>
+        <p class="subtitulo">Consulte os livros disponíveis no acervo.</p>
 
-        <div id="livro">
-            Carregando...
+        <div id="livros">
+            Carregando livros...
         </div>
-
     </div>
 
-   <script>
-    function carregarLivro() {
-    fetch('/livro')
-        .then(response => response.json())
-        .then(livro => {
-            document.getElementById('livro').innerHTML = `
-                <h2>${livro.titulo}</h2>
-                <p>Autor: ${livro.autor}</p>
-                <p>Disponível: ${livro.disponivel ? 'Sim' : 'Não'}</p>
+    <script>
+        async function carregarLivros() {
+            const areaLivros = document.getElementById("livros");
 
-                ${
-                    livro.disponivel
-                    ? '<button class="disponivel" onclick="emprestarLivro()">Emprestar</button>'
-                    : '<button class="indisponivel" onclick="devolverLivro()">Devolver</button>'
+            try {
+                const resposta = await fetch("/api/livros");
+
+                if (!resposta.ok) {
+                    throw new Error("Não foi possível buscar os livros.");
                 }
-            `;
-        });
-    }
 
-    function emprestarLivro() {
-        fetch('/livro/emprestar')
-            .then(() => carregarLivro());
-    }
+                const livros = await resposta.json();
 
-    function devolverLivro() {
-        fetch('/livro/devolver')
-            .then(() => carregarLivro());
-    }
+                if (livros.length === 0) {
+                    areaLivros.textContent = "Nenhum livro cadastrado.";
+                    return;
+                }
 
-    carregarLivro();
-</script>
+                areaLivros.innerHTML = livros.map(livro => {
+                    const disponivel = !livro.emprestadoPor;
 
+                    return `
+                        <div class="livro">
+                            <h2>${livro.titulo}</h2>
+                            <p><strong>Autor:</strong> ${livro.autor}</p>
+                            <p><strong>ID:</strong> ${livro.id}</p>
+                            <p>
+                                <strong>Situação:</strong>
+                                <span class="${disponivel ? "disponivel" : "indisponivel"}">
+                                    ${disponivel
+                                        ? "Disponível"
+                                        : "Emprestado para " + livro.emprestadoPor}
+                                </span>
+                            </p>
+                        </div>
+                    `;
+                }).join("");
+
+            } catch (erro) {
+                areaLivros.textContent =
+                    "Erro ao carregar os livros. Verifique se o sistema está funcionando.";
+                console.error(erro);
+            }
+        }
+
+        carregarLivros();
+    </script>
 </body>
 </html>
