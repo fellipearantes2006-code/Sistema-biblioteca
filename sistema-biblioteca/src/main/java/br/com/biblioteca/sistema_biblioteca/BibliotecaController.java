@@ -37,18 +37,14 @@ public class BibliotecaController {
         return "redirect:/";
     }
 
-    @PostMapping("/emprestimos")
-    public String emprestarLivro(
+        @PostMapping("/emprestimos")
+        public String emprestarLivro(
             @RequestParam int id,
-            @RequestParam String nomeUsuario,
             RedirectAttributes redirect) {
 
-        if (nomeUsuario.isBlank()) {
+        if (bibliotecaService.emprestarLivro(id, "Leitor")) {
             redirect.addFlashAttribute(
-                    "mensagem", "Informe o nome do leitor.");
-        } else if (bibliotecaService.emprestarLivro(id, nomeUsuario.trim())) {
-            redirect.addFlashAttribute(
-                    "mensagem", "Empréstimo realizado com sucesso!");
+                    "mensagem", "Livro emprestado com sucesso!");
         } else {
             redirect.addFlashAttribute(
                     "mensagem", "Livro não encontrado ou indisponível.");

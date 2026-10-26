@@ -17,6 +17,7 @@
         </div>
     </div>
 
+    
     <script>
         async function carregarLivros() {
             const areaLivros = document.getElementById("livros");
@@ -25,7 +26,7 @@
                 const resposta = await fetch("/api/livros");
 
                 if (!resposta.ok) {
-                    throw new Error("Não foi possível buscar os livros.");
+                    throw new Error("Erro ao buscar livros");
                 }
 
                 const livros = await resposta.json();
@@ -42,7 +43,7 @@
                         <div class="livro">
                             <h2>${livro.titulo}</h2>
                             <p><strong>Autor:</strong> ${livro.autor}</p>
-                            <p><strong>ID:</strong> ${livro.id}</p>
+
                             <p>
                                 <strong>Situação:</strong>
                                 <span class="${disponivel ? "disponivel" : "indisponivel"}">
@@ -51,18 +52,88 @@
                                         : "Emprestado para " + livro.emprestadoPor}
                                 </span>
                             </p>
+
+                            ${
+                                disponivel
+                                ? `<button onclick="emprestarLivro(${livro.id})">
+                                    Emprestar
+                                </button>`
+                                : `<button onclick="devolverLivro(${livro.id})">
+                                    Devolver
+                                </button>`
+                            }
                         </div>
                     `;
                 }).join("");
 
             } catch (erro) {
-                areaLivros.textContent =
-                    "Erro ao carregar os livros. Verifique se o sistema está funcionando.";
+                areaLivros.textContent = "Não foi possível carregar os livros.";
+                console.error(erro);
+            }
+        }
+
+        async function emprestarLivro(id) {
+            const nomeUsuario = prompt("Digite o nome do leitor:");
+
+            if (!nomeUsuario || !nomeUsuario.trim()) {
+                return;
+            }
+
+            try {
+                const resposta = await fetch("/emprestimos", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams({
+                        id: id,
+                        nomeUsuario: nomeUsuario.trim()
+                    })
+                });
+
+                if (!resposta.ok) {
+                    throw new Error("Falha ao realizar empréstimo");
+                }
+
+                await carregarLivros();
+            } catch (erro) {
+                alert("Não foi possível realizar o empréstimo.");
+                console.error(erro);
+            }
+        }
+
+        async function devolverLivro(id) {
+            const nomeUsuario = prompt("Digite o nome do leitor que está devolvendo:");
+
+            if (!nomeUsuario || !nomeUsuario.trim()) {
+                return;
+            }
+
+            try {
+                const resposta = await fetch("/devolucoes", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams({
+                        id: id,
+                        nomeUsuario: nomeUsuario.trim()
+                    })
+                });
+
+                if (!resposta.ok) {
+                    throw new Error("Falha ao realizar devolução");
+                }
+
+                await carregarLivros();
+            } catch (erro) {
+                alert("Não foi possível realizar a devolução.");
                 console.error(erro);
             }
         }
 
         carregarLivros();
     </script>
+
 </body>
 </html>
