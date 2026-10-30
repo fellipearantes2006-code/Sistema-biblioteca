@@ -1,0 +1,45 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar conta - Biblioteca</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <main class="cartao">
+        <h1>Criar conta</h1>
+        <p class="subtitulo">Faça seu cadastro na biblioteca.</p>
+
+        <p class="mensagem erro" th:if="${erro}" th:text="${erro}"></p>
+
+        <form th:action="@{/cadastro}" method="post">
+            <label for="email">E-mail</label>
+            <input id="email" type="email" name="email"
+                   placeholder="seu@email.com" autocomplete="email" required>
+
+            <label for="senha">Senha</label>
+            <input id="senha" type="password" name="senha"
+                   placeholder="Mínimo de 8 caracteres"
+                   minlength="8" autocomplete="new-password" required>
+
+            <label for="tipo">Tipo de conta</label>
+            <select id="tipo" name="tipo" required>
+                <option value="">Selecione seu perfil</option>
+                <option value="LEITOR">Leitor</option>
+                <option value="ESCRITOR">Escritor</option>
+            </select>
+
+            <button type="submit">Criar conta</button>
+        </form>
+
+        <p class="rodape">
+            Já tem uma conta?
+            <a href="/login">Entrar</a>
+        </p>
+    </main>
+</body>
+</html>
+
