@@ -72,65 +72,76 @@
             }
         }
 
+        
         async function emprestarLivro(id) {
-            const nomeUsuario = prompt("Digite o nome do leitor:");
-
-            if (!nomeUsuario || !nomeUsuario.trim()) {
-                return;
-            }
-
             try {
+                // Busca o token de segurança do Spring Security
+                const csrfResposta = await fetch("/csrf");
+
+                if (!csrfResposta.ok) {
+                    throw new Error("Não foi possível obter o token de segurança.");
+                }
+
+                const csrf = await csrfResposta.json();
+
                 const resposta = await fetch("/emprestimos", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        [csrf.headerName]: csrf.token
                     },
                     body: new URLSearchParams({
-                        id: id,
-                        nomeUsuario: nomeUsuario.trim()
+                        id: id
                     })
                 });
 
                 if (!resposta.ok) {
-                    throw new Error("Falha ao realizar empréstimo");
+                    throw new Error("Falha ao realizar empréstimo.");
                 }
 
                 await carregarLivros();
+
             } catch (erro) {
                 alert("Não foi possível realizar o empréstimo.");
                 console.error(erro);
             }
         }
 
+
+        
         async function devolverLivro(id) {
-            const nomeUsuario = prompt("Digite o nome do leitor que está devolvendo:");
-
-            if (!nomeUsuario || !nomeUsuario.trim()) {
-                return;
-            }
-
             try {
+                const csrfResposta = await fetch("/csrf");
+
+                if (!csrfResposta.ok) {
+                    throw new Error("Não foi possível obter o token de segurança.");
+                }
+
+                const csrf = await csrfResposta.json();
+
                 const resposta = await fetch("/devolucoes", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        [csrf.headerName]: csrf.token
                     },
                     body: new URLSearchParams({
-                        id: id,
-                        nomeUsuario: nomeUsuario.trim()
+                        id: id
                     })
                 });
 
                 if (!resposta.ok) {
-                    throw new Error("Falha ao realizar devolução");
+                    throw new Error("Falha ao realizar devolução.");
                 }
 
                 await carregarLivros();
+
             } catch (erro) {
                 alert("Não foi possível realizar a devolução.");
                 console.error(erro);
             }
         }
+
 
         carregarLivros();
     </script>

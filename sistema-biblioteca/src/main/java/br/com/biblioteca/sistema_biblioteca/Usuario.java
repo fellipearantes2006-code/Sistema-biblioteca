@@ -1,20 +1,43 @@
 package br.com.biblioteca.sistema_biblioteca;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "usuarios")
 public class Usuario {
-    private String nomeUsuario;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
     private String senha;
 
-    public Usuario(String nomeUsuario, String senha) {
-        this.nomeUsuario = nomeUsuario;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoUsuario tipo;
+
+    public Usuario() {
+    }
+
+    public Usuario(String email, String senha, TipoUsuario tipo) {
+        this.email = email;
         this.senha = senha;
+        this.tipo = tipo;
     }
 
-    public String getNomeUsuario() {
-        return nomeUsuario;
+    public Long getId() {
+        return id;
     }
 
-    public void setNomeUsuario(String nomeUsuario) {
-        this.nomeUsuario = nomeUsuario;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getSenha() {
@@ -23,5 +46,13 @@ public class Usuario {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public TipoUsuario getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoUsuario tipo) {
+        this.tipo = tipo;
     }
 }

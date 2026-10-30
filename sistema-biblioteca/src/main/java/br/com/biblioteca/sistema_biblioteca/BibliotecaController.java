@@ -2,6 +2,7 @@
 package br.com.biblioteca.sistema_biblioteca;
 
 import org.springframework.stereotype.Controller;
+import java.security.Principal;
 //import org.springframework.ui.Model;
 //import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,41 +38,47 @@ public class BibliotecaController {
         return "redirect:/";
     }
 
+        
         @PostMapping("/emprestimos")
         public String emprestarLivro(
-            @RequestParam int id,
-            RedirectAttributes redirect) {
+                @RequestParam int id,
+                Principal principal,
+                RedirectAttributes redirect) {
 
-        if (bibliotecaService.emprestarLivro(id, "Leitor")) {
-            redirect.addFlashAttribute(
-                    "mensagem", "Livro emprestado com sucesso!");
-        } else {
-            redirect.addFlashAttribute(
-                    "mensagem", "Livro não encontrado ou indisponível.");
+            String emailUsuario = principal.getName();
+
+            if (bibliotecaService.emprestarLivro(id, emailUsuario)) {
+                redirect.addFlashAttribute(
+                        "mensagem", "Livro emprestado com sucesso!");
+            } else {
+                redirect.addFlashAttribute(
+                        "mensagem", "Livro não encontrado ou indisponível.");
+            }
+
+            return "redirect:/";
         }
 
-        return "redirect:/";
-    }
 
-    @PostMapping("/devolucoes")
-    public String devolverLivro(
-            @RequestParam int id,
-            @RequestParam String nomeUsuario,
-            RedirectAttributes redirect) {
+    
+        @PostMapping("/devolucoes")
+        public String devolverLivro(
+                @RequestParam int id,
+                Principal principal,
+                RedirectAttributes redirect) {
 
-        if (nomeUsuario.isBlank()) {
-            redirect.addFlashAttribute(
-                    "mensagem", "Informe o nome do leitor.");
-        } else if (bibliotecaService.devolverLivro(id, nomeUsuario.trim())) {
-            redirect.addFlashAttribute(
-                    "mensagem", "Devolução realizada com sucesso!");
-        } else {
-            redirect.addFlashAttribute(
-                    "mensagem", "Livro não encontrado ou não emprestado para esse leitor.");
+            String emailUsuario = principal.getName();
+
+            if (bibliotecaService.devolverLivro(id, emailUsuario)) {
+                redirect.addFlashAttribute(
+                        "mensagem", "Livro devolvido com sucesso!");
+            } else {
+                redirect.addFlashAttribute(
+                        "mensagem", "Livro não encontrado ou não pertence a este leitor.");
+            }
+
+            return "redirect:/";
         }
 
-        return "redirect:/";
-    }
     
     
 
