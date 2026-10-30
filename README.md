@@ -27,18 +27,18 @@ Login de usuários (FEITO)
 
 ## Gerenciamento de livros
 
-Cadastro de livros (NÃO FEITO)  
+Cadastro de livros (NÃO FEITO)
 Edição de livros (NÃO FEITO)
 Exclusão de livros  (NÃO FEITO)
 
 ## Empréstimos
 
-Realizar empréstimo de livros (FEITO)
+Realizar empréstimo de livros(FEITO)
 Devolver livros (FEITO)
 
 ## Interface
 
-Página inicial (FEITO)
-Exibição dos livros (FEITO)
+Página inicial (FEITO) 
+Exibição dos livros (FEITO) 
 Melhorias visuais (NÃO FEITO)
 Responsividade (NÃO FEITO)
