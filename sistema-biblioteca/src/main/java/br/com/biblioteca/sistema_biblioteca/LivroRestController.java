@@ -1,10 +1,14 @@
+
 package br.com.biblioteca.sistema_biblioteca;
 
 import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api")
 public class LivroRestController {
 
     private final BibliotecaService bibliotecaService;
@@ -13,8 +17,9 @@ public class LivroRestController {
         this.bibliotecaService = bibliotecaService;
     }
 
-    @GetMapping("/api/livros")
+    @GetMapping("/livros")
     public List<Livro> listarLivros() {
         return bibliotecaService.listarLivros();
     }
 }
+

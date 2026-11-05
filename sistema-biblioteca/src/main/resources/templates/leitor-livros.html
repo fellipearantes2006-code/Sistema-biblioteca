@@ -1,0 +1,150 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body th:attr="data-email=${emailUsuario}">
+
+    <div class="container">
+        <h1>Biblioteca</h1>
+
+        <p class="subtitulo">
+            Consulte os livros disponíveis no acervo.
+        </p>
+
+        <p th:if="${mensagem}" th:text="${mensagem}"></p>
+
+        <div id="livros">
+            Carregando livros...
+        </div>
+
+        <p>
+            <a href="/logout">Sair da conta</a>
+        </p>
+    </div>
+
+    <script>
+        async function carregarLivros() {
+            const areaLivros = document.getElementById("livros");
+
+            try {
+                const resposta = await fetch("/api/livros");
+
+                if (!resposta.ok) {
+                    throw new Error("Erro ao buscar livros");
+                }
+
+                const livros = await resposta.json();
+
+                if (livros.length === 0) {
+                    areaLivros.textContent =
+                        "Nenhum livro publicado ainda.";
+                    return;
+                }
+
+                const emailUsuario = document.body.dataset.email;
+
+                areaLivros.innerHTML = livros.map(livro => {
+                    const disponivel = !livro.emprestadoPor;
+
+                    const meuEmprestimo =
+                        livro.emprestadoPor === emailUsuario;
+
+                    return `
+                        <div class="livro">
+                            <h2>${livro.titulo}</h2>
+
+                            <p>
+                                <strong>Autor:</strong>
+                                ${livro.autor}
+                            </p>
+
+                            <p>
+                                <strong>Data de publicação:</strong>
+                                ${livro.dataPublicacao || "Não informada"}
+                            </p>
+
+                            <p>
+                                <strong>Situação:</strong>
+                                <span class="${disponivel
+                                    ? "disponivel"
+                                    : "indisponivel"}">
+                                    ${disponivel
+                                        ? "Disponível"
+                                        : "Emprestado"}
+                                </span>
+                            </p>
+
+                            ${
+                                disponivel
+                                ? `<button onclick="emprestarLivro(${livro.id})">
+                                    Emprestar
+                                   </button>`
+                                : meuEmprestimo
+                                    ? `<button onclick="devolverLivro(${livro.id})">
+                                        Devolver
+                                       </button>`
+                                    : `<p>Este livro está emprestado.</p>`
+                            }
+                        </div>
+                    `;
+                }).join("");
+
+            } catch (erro) {
+                areaLivros.textContent =
+                    "Não foi possível carregar os livros.";
+
+                console.error(erro);
+            }
+        }
+
+        async function enviarAcao(url, id) {
+            try {
+                const csrfResposta = await fetch("/csrf");
+
+                if (!csrfResposta.ok) {
+                    throw new Error("Não foi possível obter o token de segurança.");
+                }
+
+                const csrf = await csrfResposta.json();
+
+                const resposta = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        [csrf.headerName]: csrf.token
+                    },
+                    body: new URLSearchParams({ id: id })
+                });
+
+                if (!resposta.ok) {
+                    throw new Error("Falha ao realizar operação.");
+                }
+
+                await carregarLivros();
+
+            } catch (erro) {
+                alert("Não foi possível realizar a operação.");
+                console.error(erro);
+            }
+        }
+
+        function emprestarLivro(id) {
+            enviarAcao("/emprestimos", id);
+        }
+
+        function devolverLivro(id) {
+            enviarAcao("/devolucoes", id);
+        }
+
+        carregarLivros();
+    </script>
+
+</body>
+</html>

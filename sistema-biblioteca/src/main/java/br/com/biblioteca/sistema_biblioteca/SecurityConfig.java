@@ -28,6 +28,13 @@ public class SecurityConfig {
                 ).permitAll()
                 .requestMatchers("/escritor/**").hasAuthority("ESCRITOR")
                 .requestMatchers("/leitor/**").hasAuthority("LEITOR")
+
+                .requestMatchers("/emprestimos", "/devolucoes")
+                .hasAuthority("LEITOR")
+                
+                .requestMatchers("/api/livros")
+                .hasAnyAuthority("LEITOR", "ESCRITOR")
+                
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
