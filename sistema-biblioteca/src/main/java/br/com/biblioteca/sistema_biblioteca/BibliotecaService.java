@@ -1,7 +1,6 @@
-
 package br.com.biblioteca.sistema_biblioteca;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -9,55 +8,63 @@ import org.springframework.stereotype.Service;
 @Service
 public class BibliotecaService {
 
-    private final List<Livro> livros = new ArrayList<>();
-    private int proximoId = 1;
+    private final LivroRepository livroRepository;
 
-    public BibliotecaService() {
-        cadastrarLivro("Dom Casmurro", "Machado de Assis");
-        cadastrarLivro("O Pequeno Príncipe", "Antoine de Saint-Exupéry");
-        cadastrarLivro("A Revolução dos Bichos", "George Orwell");
+    public BibliotecaService(LivroRepository livroRepository) {
+        this.livroRepository = livroRepository;
     }
 
+    // Listar todos os livros publicados
     public List<Livro> listarLivros() {
-        return livros;
+        return livroRepository.findAll();
     }
 
-    public Livro cadastrarLivro(String titulo, String autor) {
-        Livro livro = new Livro(proximoId++, titulo, autor);
-        livros.add(livro);
-        return livro;
+    // Publicar um novo livro
+    public Livro cadastrarLivro(
+            String titulo,
+            String autor,
+            LocalDate dataPublicacao,
+            String emailEscritor) {
+
+        Livro livro = new Livro(
+                titulo,
+                autor,
+                dataPublicacao,
+                emailEscritor
+        );
+
+        return livroRepository.save(livro);
     }
 
-    public boolean emprestarLivro(int id, String nomeUsuario) {
-        Livro livro = buscarPorId(id);
+    // Emprestar um livro
+    public boolean emprestarLivro(Long id, String emailUsuario) {
+
+        Livro livro = livroRepository.findById(id).orElse(null);
 
         if (livro == null || livro.getEmprestadoPor() != null) {
             return false;
         }
 
-        livro.setEmprestadoPor(nomeUsuario);
+        livro.setEmprestadoPor(emailUsuario);
+        livroRepository.save(livro);
+
         return true;
     }
 
-    public boolean devolverLivro(int id, String nomeUsuario) {
-        Livro livro = buscarPorId(id);
+    // Devolver um livro
+    public boolean devolverLivro(Long id, String emailUsuario) {
+
+        Livro livro = livroRepository.findById(id).orElse(null);
 
         if (livro == null ||
-                !nomeUsuario.equals(livro.getEmprestadoPor())) {
+                !emailUsuario.equals(livro.getEmprestadoPor())) {
             return false;
         }
 
         livro.setEmprestadoPor(null);
+        livroRepository.save(livro);
+
         return true;
     }
-
-    private Livro buscarPorId(int id) {
-        for (Livro livro : livros) {
-            if (livro.getId() == id) {
-                return livro;
-            }
-        }
-
-        return null;
-    }
 }
+
