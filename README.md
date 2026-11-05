@@ -78,14 +78,6 @@ Spring Web MVC, para as páginas e rotas da aplicação.
 | `GET` | `/csrf` | Retorna o token CSRF necessário para enviar operações protegidas, como empréstimos e devoluções. |
 | `POST` | `/logout` | Encerra a sessão e redireciona para `/login?logout`. É tratado pelo Spring Security. |
 
-
-## Read 
-Completed with input: {
-  "path": "C:\\Users\\User\\Desktop\\Biblioteca\\Sistema-biblioteca-copia\\README.md"
-}
-
-Você pode acrescentar ao README uma seção como esta:
-
 ## Como baixar e executar o projeto
 
 1. Instale o **Java 21** e o **Git** no computador.
@@ -111,6 +103,7 @@ cd Sistema-biblioteca\sistema-biblioteca
 
 ## Nome dos integrandes
 Fellipe Vieira Arantes
+
 Karita Aparecida Moura
 
 
