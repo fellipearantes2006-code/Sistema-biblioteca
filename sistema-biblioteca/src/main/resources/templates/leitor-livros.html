@@ -12,6 +12,7 @@
 <body th:attr="data-email=${emailUsuario}">
 
     <div class="container">
+
         <h1>Biblioteca</h1>
 
         <p class="subtitulo">
@@ -20,16 +21,30 @@
 
         <p th:if="${mensagem}" th:text="${mensagem}"></p>
 
+        <div class="pesquisa">
+            <input
+                type="text"
+                id="campoPesquisa"
+                placeholder="Pesquisar por título ou autor..."
+                oninput="filtrarLivros()"
+            >
+        </div>
+
         <div id="livros">
             Carregando livros...
         </div>
 
-        <p>
-            <a href="/logout">Sair da conta</a>
-        </p>
+        <form th:action="@{/logout}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}"
+                th:value="${_csrf.token}">
+            <button type="submit">Sair da conta</button>
+        </form>
+
     </div>
 
     <script>
+        let todosLivros = [];
+
         async function carregarLivros() {
             const areaLivros = document.getElementById("livros");
 
@@ -40,70 +55,70 @@
                     throw new Error("Erro ao buscar livros");
                 }
 
-                const livros = await resposta.json();
-
-                if (livros.length === 0) {
-                    areaLivros.textContent =
-                        "Nenhum livro publicado ainda.";
-                    return;
-                }
-
-                const emailUsuario = document.body.dataset.email;
-
-                areaLivros.innerHTML = livros.map(livro => {
-                    const disponivel = !livro.emprestadoPor;
-
-                    const meuEmprestimo =
-                        livro.emprestadoPor === emailUsuario;
-
-                    return `
-                        <div class="livro">
-                            <h2>${livro.titulo}</h2>
-
-                            <p>
-                                <strong>Autor:</strong>
-                                ${livro.autor}
-                            </p>
-
-                            <p>
-                                <strong>Data de publicação:</strong>
-                                ${livro.dataPublicacao || "Não informada"}
-                            </p>
-
-                            <p>
-                                <strong>Situação:</strong>
-                                <span class="${disponivel
-                                    ? "disponivel"
-                                    : "indisponivel"}">
-                                    ${disponivel
-                                        ? "Disponível"
-                                        : "Emprestado"}
-                                </span>
-                            </p>
-
-                            ${
-                                disponivel
-                                ? `<button onclick="emprestarLivro(${livro.id})">
-                                    Emprestar
-                                   </button>`
-                                : meuEmprestimo
-                                    ? `<button onclick="devolverLivro(${livro.id})">
-                                        Devolver
-                                       </button>`
-                                    : `<p>Este livro está emprestado.</p>`
-                            }
-                        </div>
-                    `;
-                }).join("");
+                todosLivros = await resposta.json();
+                exibirLivros(todosLivros);
 
             } catch (erro) {
-                areaLivros.textContent =
-                    "Não foi possível carregar os livros.";
-
+                areaLivros.textContent = "Não foi possível carregar os livros.";
                 console.error(erro);
             }
         }
 
+        // Filtrar livros pelo título ou autor
+        function filtrarLivros() {
+            const pesquisa = document
+                .getElementById("campoPesquisa")
+                .value
+                .toLowerCase()
+                .trim();
+
+            const livrosFiltrados = todosLivros.filter(livro =>
+                livro.titulo.toLowerCase().includes(pesquisa) ||
+                livro.autor.toLowerCase().includes(pesquisa)
+            );
+
+            exibirLivros(livrosFiltrados);
+        }
+
+        // Exibir os livros na página
+        function exibirLivros(livros) {
+            const areaLivros = document.getElementById("livros");
+            const emailUsuario = document.body.dataset.email;
+
+            if (livros.length === 0) {
+                areaLivros.textContent = "Nenhum livro encontrado.";
+                return;
+            }
+
+            areaLivros.innerHTML = livros.map(livro => {
+                const disponivel = !livro.emprestadoPor;
+                const meuEmprestimo =
+                    livro.emprestadoPor === emailUsuario;
+
+                return `
+                    <div class="livro">
+                        <h2>${livro.titulo}</h2>
+                        <p><strong>Autor:</strong> ${livro.autor}</p>
+                        <p><strong>Data de publicação:</strong>
+                            ${livro.dataPublicacao || "Não informada"}
+                        </p>
+                        <p><strong>Situação:</strong>
+                            ${disponivel ? "Disponível" : "Emprestado"}
+                        </p>
+
+                        ${
+                            disponivel
+                            ? `<button onclick="emprestarLivro(${livro.id})">Emprestar</button>`
+                            : meuEmprestimo
+                                ? `<button onclick="devolverLivro(${livro.id})">Devolver</button>`
+                                : `<p>Este livro está emprestado.</p>`
+                        }
+                    </div>
+                `;
+            }).join("");
+        }
+
+        // Enviar empréstimo ou devolução
         async function enviarAcao(url, id) {
             try {
                 const csrfResposta = await fetch("/csrf");
