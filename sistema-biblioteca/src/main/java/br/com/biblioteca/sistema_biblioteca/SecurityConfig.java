@@ -24,6 +24,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/", "/login", "/cadastro",
+                    "/style.css",
                     "/css/**", "/js/**", "/h2-console/**"
                 ).permitAll()
                 .requestMatchers("/escritor/**").hasAuthority("ESCRITOR")

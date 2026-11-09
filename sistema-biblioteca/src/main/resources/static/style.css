@@ -150,3 +150,21 @@ a {
     color: #216e39;
 }
 
+.pesquisa {
+    margin: 25px 0;
+}
+
+.pesquisa input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.pesquisa input:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
