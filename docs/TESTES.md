@@ -22,7 +22,7 @@
 
 • Situação: passou 
 
-evidencias: ![alt text](image.png) e ![alt text](image-1.png)
+evidencias: ![alt text](image.png) e em outra conta: ![alt text](image-1.png)
 
 
 
@@ -41,5 +41,5 @@ evidencia: ![alt text](image-2.png)
 
 # Plano alternativo
 
-plano de apresentação alternativo, em caso de o site não funcionar, será utilizado de imagens comprovando o funcionamento do site em um arquivo de slide-show 
+plano de apresentação alternativo, em caso de o site não funcionar, será utilizado de imagens comprovando o funcionamento do site em um arquivo de slide-show ou PDF
 

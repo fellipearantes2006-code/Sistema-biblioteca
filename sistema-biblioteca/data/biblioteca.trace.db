@@ -1,0 +1,4 @@
+2026-11-12 22:18:46.959922-03:00 jdbc[23]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM LIVROS \000d\000aDELETE [*]FROM LIVROS"; SQL statement:
+SELECT * FROM LIVROS 
+DELETE FROM LIVROS [42000-240]
