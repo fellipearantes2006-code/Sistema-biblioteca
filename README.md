@@ -40,7 +40,7 @@ Devolver livros (FEITO)
 
 Página inicial (FEITO) 
 Exibição dos livros (FEITO) 
-Melhorias visuais (NÃO FEITO)
+Melhorias visuais (FEITO)
 Responsividade (FEITO)
 
 ## Tecnologias utilizadas

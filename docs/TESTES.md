@@ -22,9 +22,11 @@
 
 • Situação: passou 
 
+evidencias: ![alt text](image.png) e ![alt text](image-1.png)
 
 
-• Teste 03 — Funcionalidade:  barra de pesuisa
+
+• Teste 03 — Funcionalidade:  barra de pesquisa
 
 • Entrada/ação:  escrever o nome do livro
 
@@ -34,6 +36,10 @@
 
 • Situação: passou
 
+evidencia: ![alt text](image-2.png)
+
+
 # Plano alternativo
 
 plano de apresentação alternativo, em caso de o site não funcionar, será utilizado de imagens comprovando o funcionamento do site em um arquivo de slide-show 
+
